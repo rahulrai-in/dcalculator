@@ -35,7 +35,12 @@ namespace LogService
             {
                 var serviceName = sp.GetRequiredService<IWebHostEnvironment>().ApplicationName;
                 var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
-                var reporter = new RemoteReporter.Builder().WithLoggerFactory(loggerFactory).WithSender(new UdpSender())
+                var reporter = new RemoteReporter.Builder()
+                    .WithLoggerFactory(loggerFactory)
+                    .WithSender(
+                        new HttpSender(
+                            Configuration.GetConnectionString("Jaeger", "http-thrift")
+                            ?? "http://localhost:14268/api/traces"))
                     .Build();
                 var tracer = new Tracer.Builder(serviceName)
                     // The constant sampler reports every span.

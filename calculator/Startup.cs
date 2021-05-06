@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using Jaeger;
 using Jaeger.Reporters;
 using Jaeger.Samplers;
@@ -29,7 +30,21 @@ namespace Calculator
         {
             services.AddControllers();
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo {Title = "Calculator", Version = "v1"}));
-            services.AddHttpClient("logService", c => { c.BaseAddress = new Uri(Configuration["LogService"]); });
+            services.AddHttpClient("logService",
+                    c =>
+                    {
+                        c.BaseAddress =
+                            // Value set by tye
+                            Configuration.GetServiceUri("LogService")
+                            // For running project without tye
+                            ?? new Uri(Configuration["LogService"]);
+                    })
+                .ConfigurePrimaryHttpMessageHandler(() =>
+                    new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback =
+                            HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                    });
 
             services.AddOpenTracing();
             // Adds the Jaeger Tracer.
@@ -37,8 +52,14 @@ namespace Calculator
             {
                 var serviceName = sp.GetRequiredService<IWebHostEnvironment>().ApplicationName;
                 var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
-                var reporter = new RemoteReporter.Builder().WithLoggerFactory(loggerFactory).WithSender(new UdpSender())
+                var reporter = new RemoteReporter.Builder()
+                    .WithLoggerFactory(loggerFactory)
+                    .WithSender(
+                        new HttpSender(
+                            Configuration.GetConnectionString("Jaeger", "http-thrift")
+                            ?? "http://localhost:14268/api/traces"))
                     .Build();
+
                 var tracer = new Tracer.Builder(serviceName)
                     // The constant sampler reports every span.
                     .WithSampler(new ConstSampler(true))

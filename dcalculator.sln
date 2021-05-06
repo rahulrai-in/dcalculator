@@ -10,6 +10,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculator", "calculator\Ca
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogService", "logservice\LogService.csproj", "{2C1D8FF9-6C7B-4128-8206-ABE605E9B9BF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{93D6E7CC-8A30-43E5-B56F-A8F01744F06D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		dcalculator.sln.DotSettings = dcalculator.sln.DotSettings
+		README.md = README.md
+		tye.yaml = tye.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
