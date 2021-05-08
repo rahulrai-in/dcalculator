@@ -42,6 +42,7 @@ namespace Calculator
                 .ConfigurePrimaryHttpMessageHandler(() =>
                     new HttpClientHandler
                     {
+                        // For demo only. Use appropriate certificates in production.
                         ServerCertificateCustomValidationCallback =
                             HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
                     });
