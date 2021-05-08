@@ -57,7 +57,9 @@ namespace Calculator
                     .WithLoggerFactory(loggerFactory)
                     .WithSender(
                         new HttpSender(
+                            // Value set by Tye
                             Configuration.GetConnectionString("Jaeger", "http-thrift")
+                            // For running project without Tye
                             ?? "http://localhost:14268/api/traces"))
                     .Build();
 
